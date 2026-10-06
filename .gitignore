@@ -1,0 +1,27 @@
+# Arduino build artefacts
+*.o
+*.elf
+*.eep
+*.hex
+build/
+*.ino.cpp
+*.ino.cpp.preprocessed
+
+# ESP32 / PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Node tools
+node_modules/
+npm-debug.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local secrets / overrides (never commit real Wi-Fi passwords here)
+.env
+*secret*.h
+config.local.h

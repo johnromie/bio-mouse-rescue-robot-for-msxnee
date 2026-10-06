@@ -1,0 +1,44 @@
+{
+  // ==========================================================================
+  //  BIO-MOUSE  --  VS Code workspace settings
+  // ==========================================================================
+  //  Fixes the false "cannot open source file Arduino.h" errors by excluding
+  //  the compiler's own include directories from IntelliSense's search, and by
+  //  telling it where the sketch roots are.
+  // ==========================================================================
+
+  // Do not let IntelliSense try to index Arduino's internal headers as if
+  // they were project code. This is what produced the misleading red squiggles.
+  "C_Cpp.default.excludePaths": [
+    "**/variants/**/pins_arduino.h",
+    "**/cores/**/pins_arduino.h",
+    "**/tools/**",
+    "**/firmware/arduino/BioMouse_Arduino/*.ino.cpp",
+    "**/firmware/arduino/BioMouse_Arduino/*.ino.cpp.preprocessed"
+  ],
+
+  // Arduino sketches are preprocessed before compiling, so IntelliSense must be
+  // told about the macro the Arduino IDE injects.
+  "C_Cpp.default.defines": [
+    "ARDUINO=10819"
+  ],
+
+  // Keep the Problems panel useful: this file is intentionally excluded from
+  // the "includePath" complaints that do not affect a real build.
+  "files.associations": {
+    "*.h": "cpp",
+    "*.ino": "cpp"
+  },
+
+  // Arduino build files.
+  "files.exclude": {
+    "**/*.o": true,
+    "**/*.elf": true,
+    "**/*.eep": true
+  },
+
+  // Do not auto-format the firmware: it is hand-aligned for readability.
+  "editor.formatOnSave": false,
+
+  "files.eol": "\n"
+}
