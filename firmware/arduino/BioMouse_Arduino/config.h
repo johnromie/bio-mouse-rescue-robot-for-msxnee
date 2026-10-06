@@ -12,9 +12,8 @@
 /* ==========================================================================
  *  PIN CONFIGURATION  --  >>> ALL ASSIGNABLE, CHANGE AS NEEDED <<<
  * ==========================================================================
- *  Defaults assume an Arduino UNO R3 / Nano (ATmega328P) and were chosen so
- *  that PWM pins are not shared with another device, D0/D1 (USB UART) stay
- *  free, D13 (onboard LED) stays free, and A4/A5 carry only the I2C bus.
+ *  Defaults match the prototype wiring on an Arduino UNO R3 / Nano (ATmega328P).
+ *  A4/A5 are reserved for the thermal sensor I2C bus.
  * ------------------------------------------------------------------------
  *  HOW TO MOVE A PIN
  *    L298N_IN1..IN4  Any 4 free digital pins. PWM is NOT required here,
@@ -30,38 +29,29 @@
  *    E-STOP           Any free digital pin, or -1 if not fitted.
  * ==========================================================================
  *
- *  >>> CHANGE LOG - HC-SR04 INTEGRATION (full map in docs/PIN_CONFIGURATION.md)
- *  Two existing pins were MOVED to free D7/D8 for the ultrasonic sensor.
- *  L298N direction pins do not need to be PWM (speed is handled by ENA/ENB),
- *  so any digital pin is acceptable for them:
- *
- *    OLD                  NEW                  REASON
- *    PIN_L298N_IN2 = D8 -> PIN_L298N_IN2 = D10  D8 reserved for HC-SR04 TRIG
- *    PIN_L298N_IN3 = D7 -> PIN_L298N_IN3 = A1  D7 reserved for HC-SR04 ECHO
- *
- *  D10 and A1 were both verified FREE before this change. Nothing else moved.
+ *  See docs/PIN_CONFIGURATION.md for the complete wiring map and UART notes.
  * ========================================================================== */
 
 // ---- [1] L298N MOTOR DRIVER : DIRECTION PINS -------------------------------
 const uint8_t PIN_L298N_IN1  = 9;    // left  motor A direction   (unchanged)
-const uint8_t PIN_L298N_IN2  = 10;   // left  motor B  MOVED from 8 (HC-SR04 TRIG)
-const uint8_t PIN_L298N_IN3  = A1;   // right motor A  MOVED from 7 (HC-SR04 ECHO)
+const uint8_t PIN_L298N_IN2  = 8;    // L298N IN2
+const uint8_t PIN_L298N_IN3  = 7;    // L298N IN3
 const uint8_t PIN_L298N_IN4  = 6;    // right motor B direction   (unchanged)
 
 // ---- [NEW] HC-SR04 ULTRASONIC : PRIMARY FRONT OBSTACLE DETECTION ----------
 // Primary front obstacle sensor. The whiskers remain as the secondary/backup
 // detector for debris the ultrasonic cannot see (thin poles, soft fabric).
-// Wiring as specified:  VCC -> 5V, GND -> GND, TRIG -> D8, ECHO -> D7
-const uint8_t PIN_ULTRASONIC_TRIG = 8;
-const uint8_t PIN_ULTRASONIC_ECHO = 7;
+// Wiring: VCC -> 5V, GND -> GND, TRIG -> D4, ECHO -> D11
+const uint8_t PIN_ULTRASONIC_TRIG = 4;
+const uint8_t PIN_ULTRASONIC_ECHO = 11;
 // The HC-SR04 drives ECHO to 5V. On a 5V UNO that is a valid logic level, so
 // no level shifter or divider is required.
 const bool ULTRASONIC_ECHO_5V_LOGIC = true;
 
 // ---- [1] L298N : SPEED (PWM) PINS -----------------------------------------
 // ENA drives BOTH left motors, ENB drives BOTH right motors.
-const uint8_t PIN_L298N_ENA  = 5;    // PWM -> left motor pair   (MUST be PWM)
-const uint8_t PIN_L298N_ENB  = 3;    // PWM -> right motor pair  (MUST be PWM)
+const uint8_t PIN_L298N_ENA  = 10;   // PWM -> left motor pair   (MUST be PWM)
+const uint8_t PIN_L298N_ENB  = 5;    // PWM -> right motor pair  (MUST be PWM)
 
 // ---- [1] WIRING POLARITY --------------------------------------------------
 // If a side drives the wrong way, flip only that side here instead of
@@ -72,15 +62,15 @@ const bool RIGHT_MOTORS_REVERSED = false;
 // ---- [4] WHISKER / OBSTACLE MICROSWITCHES ---------------------------------
 // One leg to the pin, the other to GND. With INPUT_PULLUP a pressed switch
 // reads LOW when WHISKER_ACTIVE_LOW is true.
-const uint8_t PIN_WHISKER_LEFT   = 12;  // left whisker
-const uint8_t PIN_WHISKER_RIGHT  = 4;   // right whisker
-const uint8_t PIN_WHISKER_REAR   = 11;  // optional rear whisker, -1 = absent
+const uint8_t PIN_WHISKER_LEFT   = 2;   // left whisker
+const uint8_t PIN_WHISKER_RIGHT  = 3;   // right whisker
+const int8_t  PIN_WHISKER_REAR   = -1;  // no rear whisker in this wiring
 const bool    WHISKER_ACTIVE_LOW = true;
 
 // ---- [5] ACTIVE BUZZER ----------------------------------------------------
 // 5V ACTIVE buzzer: +5V -> buzzer -> GPIO pin (the pin sinks current).
 // Never wire a buzzer straight to a GPIO pin without a driver transistor.
-const uint8_t PIN_BUZZER           = 2;
+const uint8_t PIN_BUZZER           = A3;
 const uint16_t BUZZER_TEST_TONE_HZ = 2000;  // reserved for a tone() self-test
 
 // ---- [6] BATTERY MONITORING ----------------------------------------------
@@ -102,7 +92,7 @@ const uint8_t AMG8833_I2C_ADDRESS = 0x69;
 
 // ---- [8] EMERGENCY-STOP BUTTON -------------------------------------------
 // Normally-OPEN button from the pin to GND (active LOW). Use -1 if not fitted.
-const uint8_t PIN_ESTOP_BUTTON = 13;
+const int8_t PIN_ESTOP_BUTTON = -1;    // no physical E-STOP fitted
 const bool    ESTOP_ACTIVE_LOW = true;
 
 // ---- [7] UART LINK TO THE ESP32-CAM ---------------------------------------

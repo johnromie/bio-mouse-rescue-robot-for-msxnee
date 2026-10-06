@@ -24,7 +24,7 @@
 #include "state.h"
 
 // Raw (undebounced) reading of one whisker.
-inline bool readWhiskerRaw(uint8_t pin) {
+inline bool readWhiskerRaw(int16_t pin) {
   if (pin < 0) return false;
   int v = digitalRead(pin);
   return WHISKER_ACTIVE_LOW ? (v == LOW) : (v == HIGH);

@@ -134,7 +134,7 @@ from the network reaches a motor pin.
 
 | Layer | Sensor | Role |
 |---|---|---|
-| **Primary** | HC-SR04 on `TRIG=D8`, `ECHO=D7` | Range detection, alerts at ≤ 30 cm |
+| **Primary** | HC-SR04 on `TRIG=D4`, `ECHO=D11` | Range detection, alerts at ≤ 30 cm |
 | **Secondary** | LEFT / RIGHT / BOTH whiskers | Physical backup for irregular debris |
 
 The left and right whiskers are made from guitar strings.

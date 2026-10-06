@@ -4,8 +4,8 @@
  *  WIRING (as specified)
  *    VCC  -> Arduino 5V
  *    GND  -> Arduino GND
- *    TRIG -> Arduino D8
- *    ECHO -> Arduino D7
+ *    TRIG -> Arduino D4
+ *    ECHO -> Arduino D11
  *
  *  HOW IT WORKS
  *    1. Hold TRIG LOW, then HIGH for 10 microseconds.
