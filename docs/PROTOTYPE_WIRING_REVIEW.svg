@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1500" viewBox="0 0 2200 1500" role="img" aria-labelledby="title desc">
+  <title id="title">BIO-MOUSE prototype wiring guide based on the supplied component diagram</title>
+  <desc id="desc">The supplied prototype image is shown as a component reference. Verified power and signal connections are listed separately for the Arduino Uno, L298N, LM2596, ESP32-CAM, sensors, buzzer, and whisker switches.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 36px; font-weight: 700; }
+      .sub { font-size: 18px; fill: #526174; }
+      .head { font-size: 23px; font-weight: 700; }
+      .label { font-size: 18px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; }
+      .tiny { font-size: 13px; }
+      .card { fill: #fff; stroke: #cbd5e1; stroke-width: 2; rx: 14; }
+      .section { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 2; rx: 16; }
+      .warn { fill: #fff7df; stroke: #e4a900; stroke-width: 2; rx: 14; }
+      .red { fill: #b42318; }
+      .blue { fill: #1d4ed8; }
+      .muted { fill: #526174; }
+    </style>
+  </defs>
+  <rect width="2200" height="1500" fill="#f8fafc"/>
+  <text x="44" y="55" class="title">BIO-MOUSE — PROTOTYPE WIRING GUIDE</text>
+  <text x="44" y="88" class="sub">Component picture supplied by you, with a readable connection schedule based on the prototype pin map.</text>
+
+  <rect x="40" y="112" width="1280" height="760" class="section"/>
+  <text x="64" y="151" class="head">COMPONENT REFERENCE IMAGE</text>
+  <image href="docsprototype-wiring-original.png" x="62" y="174" width="1236" height="675" preserveAspectRatio="xMidYMid meet"/>
+  <text x="64" y="858" class="small muted">The colored lines in the source sketch cross and are not used as the wiring authority; follow the connection lists on this page.</text>
+
+  <rect x="1350" y="112" width="810" height="760" class="section"/>
+  <text x="1376" y="151" class="head">1. POWER — CONNECT WITH POWER OFF</text>
+  <rect x="1376" y="174" width="758" height="210" class="card"/>
+  <text x="1400" y="210" class="label">7.4 V motor battery and switch</text>
+  <text x="1400" y="244" class="body">Battery + → switch → split to L298N “12V / Vs” and LM2596 IN+.</text>
+  <text x="1400" y="278" class="body">Battery − → L298N GND and LM2596 IN−.</text>
+  <text x="1400" y="312" class="body">LM2596 OUT+ → ESP32-CAM 5V pin, after setting output to 5.0 V.</text>
+  <text x="1400" y="346" class="body">LM2596 OUT− → common GND; ESP32-CAM GND connects here too.</text>
+
+  <rect x="1376" y="402" width="758" height="180" class="card"/>
+  <text x="1400" y="438" class="label">Arduino UNO and breadboard rails</text>
+  <text x="1400" y="472" class="body">Separate 9 V supply → UNO DC jack or VIN; its − goes to UNO GND.</text>
+  <text x="1400" y="506" class="body">UNO 5V → breadboard + rail; UNO GND → breadboard − rail.</text>
+  <text x="1400" y="540" class="body">Join that − rail to the same common GND as battery − and LM2596 OUT−.</text>
+
+  <rect x="1376" y="600" width="758" height="240" class="warn"/>
+  <text x="1400" y="638" class="label red">IMPORTANT POWER CHECKS</text>
+  <text x="1400" y="674" class="body">Keep the 7.4 V, UNO 9 V, and regulated 5 V positive rails separate.</text>
+  <text x="1400" y="708" class="body">Never connect LM2596 IN+ to UNO 5V. Never feed 9 V into UNO 5V.</text>
+  <text x="1400" y="742" class="body">Measure LM2596 OUT before attaching the ESP32-CAM; set it to 5.0 V.</text>
+  <text x="1400" y="776" class="body">Use the L298N 5V terminal only as specified for your exact board/jumper setup.</text>
+  <text x="1400" y="812" class="small red">Check that the motors and battery are suitable for the L298N and 7.4 V pack.</text>
+
+  <rect x="40" y="900" width="690" height="390" class="section"/>
+  <text x="64" y="940" class="head">2. L298N AND MOTORS</text>
+  <text x="70" y="988" class="body">UNO D10 → ENA (remove ENA jumper)</text>
+  <text x="70" y="1025" class="body">UNO D5 → ENB (remove ENB jumper)</text>
+  <text x="70" y="1062" class="body">UNO D9 → IN1; D8 → IN2</text>
+  <text x="70" y="1099" class="body">UNO D7 → IN3; D6 → IN4</text>
+  <text x="70" y="1136" class="body">OUT1/OUT2 → one motor pair; OUT3/OUT4 → other pair.</text>
+  <text x="70" y="1173" class="body">L298N GND → battery − and common GND.</text>
+  <text x="70" y="1220" class="small muted">Lift the wheels for first tests. If one side turns backward, swap that motor pair’s two output wires.</text>
+
+  <rect x="755" y="900" width="690" height="390" class="section"/>
+  <text x="779" y="940" class="head">3. UNO SENSORS AND SWITCHES</text>
+  <text x="785" y="988" class="body">AMG8833: SDA → A4; SCL → A5</text>
+  <text x="785" y="1025" class="body">HC-SR04: TRIG → D4; ECHO → D11</text>
+  <text x="785" y="1062" class="body">Left microswitch: NO → D2; COM → GND</text>
+  <text x="785" y="1099" class="body">Right microswitch: NO → D3; COM → GND</text>
+  <text x="785" y="1136" class="body">Active buzzer signal → A3; use a transistor driver if needed.</text>
+  <text x="785" y="1173" class="body">Sensor grounds → common GND; power from 5V only if the breakout allows it.</text>
+  <text x="785" y="1220" class="small muted">Whisker inputs use INPUT_PULLUP; leave NC unconnected. No physical E-STOP is fitted.</text>
+
+  <rect x="1470" y="900" width="690" height="390" class="section"/>
+  <text x="1494" y="940" class="head">4. ESP32-CAM SERIAL LINK</text>
+  <text x="1500" y="988" class="body">ESP32-CAM GPIO13 TX → UNO D0 / RX</text>
+  <text x="1500" y="1025" class="body">UNO D1 / TX → level shifter/divider → GPIO14 RX</text>
+  <text x="1500" y="1062" class="body">ESP32-CAM GND ↔ common GND</text>
+  <text x="1500" y="1108" class="body red">Do not feed 5 V UNO TX directly into ESP32-CAM RX.</text>
+  <text x="1500" y="1145" class="body">Disconnect D0/D1 wires when uploading firmware to the UNO.</text>
+  <text x="1500" y="1182" class="body">GPIO13/14 overlap microSD pins; leave microSD unused in this wiring.</text>
+  <text x="1500" y="1220" class="small muted">The link must match the ESP32-CAM firmware serial pin configuration.</text>
+
+  <rect x="40" y="1320" width="2120" height="125" class="warn"/>
+  <text x="64" y="1362" class="label red">BATTERY MONITOR NOTE</text>
+  <text x="64" y="1398" class="body">The firmware’s A0 divider thresholds currently assume a 3S battery, while this prototype uses a 7.4 V (2S) pack. Leave the divider disconnected until the firmware thresholds are corrected.</text>
+  <text x="64" y="1428" class="small muted">Power off before rewiring. Verify polarity and continuity. This map describes intended connections; confirm actual module labels and ratings.</text>
+</svg>

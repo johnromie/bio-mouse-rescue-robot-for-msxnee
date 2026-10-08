@@ -23,6 +23,11 @@ in firmware. The rear whisker is also not fitted and is disabled.
 
 Wiring picture: [Whisker microswitch wiring diagram](WHISKER_MICROSWITCH_WIRING.svg).
 
+Full prototype connection map: [Full system wiring diagram](FULL_SYSTEM_WIRING.svg).
+
+Component reference image from the prototype: [Original wiring image](docsprototype-wiring-original.png).
+For the reviewed power and signal connections, use the [Prototype wiring guide](PROTOTYPE_WIRING_REVIEW.svg); the colored crossings in the original image are hard to trace and are not the authoritative pin map.
+
 ### Other connections
 
 | Device | Signal | Arduino pin |

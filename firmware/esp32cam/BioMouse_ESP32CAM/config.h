@@ -14,6 +14,24 @@
 // instead of relying on camera.h being included first.
 #include <esp_camera.h>
 
+// Optional, gitignored per-device Wi-Fi settings. Keep hotspot credentials
+// in config.local.h so they are not published with the project.
+#if defined(__has_include)
+  #if __has_include("config.local.h")
+    #include "config.local.h"
+  #endif
+#endif
+
+#ifndef BIOMOUSE_USE_STATION_MODE
+  #define BIOMOUSE_USE_STATION_MODE false
+#endif
+#ifndef BIOMOUSE_STATION_SSID
+  #define BIOMOUSE_STATION_SSID "YOUR_WIFI_NAME"
+#endif
+#ifndef BIOMOUSE_STATION_PASSWORD
+  #define BIOMOUSE_STATION_PASSWORD "YOUR_WIFI_PASSWORD"
+#endif
+
 /* ==========================================================================
  *  BOARD SELECTION
  * ==========================================================================
@@ -86,7 +104,7 @@ const uint32_t APP_DISCONNECT_STOP_MS = 0;
  *  To use an existing router instead, set USE_STATION_MODE = true and fill in
  *  the SSID / PASSWORD below.
  * ========================================================================== */
-const bool USE_STATION_MODE = false;
+const bool USE_STATION_MODE = BIOMOUSE_USE_STATION_MODE;
 
 // ---- Access Point (used when USE_STATION_MODE == false) -------------------
 const char* AP_SSID_PREFIX = "BIO-MOUSE";    // final name is BIO-MOUSE-XXXX
@@ -94,8 +112,8 @@ const char* AP_PASSWORD    = "biomouse123";  // >= 8 chars, or "" for open
 const uint8_t AP_CHANNEL   = 1;
 
 // ---- Station mode (used when USE_STATION_MODE == true) ------------------
-const char* STATION_SSID         = "YOUR_WIFI_NAME";
-const char* STATION_PASSWORD     = "YOUR_WIFI_PASSWORD";
+const char* STATION_SSID         = BIOMOUSE_STATION_SSID;
+const char* STATION_PASSWORD     = BIOMOUSE_STATION_PASSWORD;
 const uint8_t STATION_MAX_RETRIES = 20;
 
 /* If the router cannot be reached after STATION_MAX_RETRIES, bring the AP up

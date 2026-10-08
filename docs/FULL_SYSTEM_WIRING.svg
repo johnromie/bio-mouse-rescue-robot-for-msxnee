@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1220" viewBox="0 0 1600 1220" role="img" aria-labelledby="title desc">
+  <title id="title">BIO-MOUSE full system wiring diagram</title>
+  <desc id="desc">Systematic wiring reference for Arduino Uno, L298N, 7.4 volt motor battery, LM2596, ESP32-CAM, sensors, buzzer, and whisker microswitches.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 16px; fill: #526174; }
+      .head { font-size: 20px; font-weight: 700; }
+      .label { font-size: 16px; font-weight: 700; }
+      .body { font-size: 15px; }
+      .small { font-size: 13px; }
+      .tiny { font-size: 12px; }
+      .card { fill: #fff; stroke: #bac6d5; stroke-width: 2; rx: 14; }
+      .section { fill: #f3f6fa; stroke: #bac6d5; stroke-width: 2; rx: 14; }
+      .wire-red { stroke: #d62828; stroke-width: 4; fill: none; }
+      .wire-black { stroke: #202938; stroke-width: 4; fill: none; }
+      .wire-orange { stroke: #f08c00; stroke-width: 3; fill: none; }
+      .wire-blue { stroke: #2563eb; stroke-width: 3; fill: none; }
+      .wire-green { stroke: #159447; stroke-width: 3; fill: none; }
+      .wire-purple { stroke: #7c3aed; stroke-width: 3; fill: none; }
+      .wire-dash { stroke-dasharray: 8 7; }
+      .redtxt { fill: #b91c1c; }
+      .greentxt { fill: #087443; }
+      .bluetxt { fill: #1d4ed8; }
+      .muted { fill: #5b6778; }
+    </style>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#d62828"/></marker>
+    <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#202938"/></marker>
+  </defs>
+
+  <rect width="1600" height="1220" fill="#f8fafc"/>
+  <text x="40" y="48" class="title">BIO-MOUSE — BUONG SYSTEM WIRING</text>
+  <text x="40" y="76" class="subtitle">Base sa setup na sinabi mo: 7.4 V motor pack • 9 V sa Arduino UNO • LM2596 5 V sa ESP32-CAM</text>
+
+  <rect x="40" y="94" width="1520" height="78" rx="12" fill="#fff2cc" stroke="#d99a00" stroke-width="2"/>
+  <text x="62" y="124" class="label redtxt">MAHALAGA: Huwag ikabit ang LM2596 IN+ sa Arduino 5V rail.</text>
+  <text x="62" y="151" class="body">IN+ = raw 7.4 V battery line. OUT+ = regulated output; sukatin muna at itakda sa 5.0 V bago ikabit sa ESP32-CAM.</text>
+
+  <!-- Power source and distribution -->
+  <rect x="40" y="196" width="480" height="392" class="section"/>
+  <text x="64" y="230" class="head">1. POWER WIRING</text>
+
+  <rect x="64" y="251" width="190" height="106" class="card"/>
+  <text x="82" y="279" class="label">7.4 V battery</text>
+  <text x="82" y="304" class="body">Motor battery source</text>
+  <text x="82" y="329" class="small redtxt">+ (red) / − (black)</text>
+
+  <rect x="294" y="251" width="196" height="106" class="card"/>
+  <text x="312" y="279" class="label">Power switch</text>
+  <text x="312" y="304" class="body">Put it on battery +</text>
+  <text x="312" y="329" class="small">before the + split</text>
+  <path d="M254 292 H294" class="wire-red" marker-end="url(#arrowRed)"/>
+
+  <rect x="64" y="382" width="426" height="78" class="card"/>
+  <text x="82" y="411" class="label">Switched battery + split</text>
+  <text x="82" y="438" class="body">→ L298N motor supply “12V” / “VS” terminal</text>
+  <text x="82" y="456" class="body">→ LM2596 IN+</text>
+  <path d="M392 357 V377" class="wire-red" marker-end="url(#arrowRed)"/>
+
+  <rect x="64" y="474" width="426" height="88" class="card"/>
+  <text x="82" y="503" class="label">Battery − / common ground (GND)</text>
+  <text x="82" y="530" class="body">Battery − → L298N GND → LM2596 IN−</text>
+  <text x="82" y="552" class="body">Tie UNO GND, ESP32-CAM GND, and sensor GND here.</text>
+  <path d="M254 335 C270 402 270 485 254 512" class="wire-black" marker-end="url(#arrowBlack)"/>
+
+  <!-- Uno separate power -->
+  <rect x="40" y="610" width="480" height="156" class="section"/>
+  <text x="64" y="644" class="head">2. UNO POWER (HIWALAY NA 9 V)</text>
+  <text x="64" y="678" class="body">9 V + → UNO DC jack o VIN</text>
+  <text x="64" y="705" class="body">9 V − → UNO GND → common ground</text>
+  <text x="64" y="739" class="small redtxt">Huwag ilagay ang 9 V sa UNO 5V pin. Huwag ding ihalo ang battery + rails.</text>
+
+  <!-- LM module -->
+  <rect x="40" y="788" width="480" height="165" class="section"/>
+  <text x="64" y="822" class="head">3. LM2596 OUTPUT PARA SA ESP32-CAM</text>
+  <text x="64" y="856" class="body">IN+ / IN− ← switched 7.4 V / common GND (sa itaas)</text>
+  <text x="64" y="883" class="body">OUT+ → ESP32-CAM 5V pin; OUT− → common GND</text>
+  <text x="64" y="910" class="small redtxt">Sukatin at ayusin sa 5.0 V bago ikabit ang ESP32-CAM.</text>
+  <text x="64" y="936" class="small">Huwag ikabit ang OUT+ sa UNO 5V habang naka-9 V ang UNO.</text>
+
+  <!-- Arduino block -->
+  <rect x="555" y="196" width="480" height="757" class="section"/>
+  <text x="579" y="230" class="head">4. ARDUINO UNO — SIGNAL PINS</text>
+  <rect x="579" y="251" width="432" height="64" rx="10" fill="#dbeafe" stroke="#6698dc" stroke-width="2"/>
+  <text x="600" y="278" class="label">Arduino UNO</text>
+  <text x="600" y="301" class="small">GND must connect to common GND bus.</text>
+
+  <text x="589" y="350" class="label">L298N motor control</text>
+  <text x="589" y="378" class="body">D10 → ENA (alisin ang ENA jumper)</text>
+  <text x="589" y="404" class="body">D5 → ENB (alisin ang ENB jumper)</text>
+  <text x="589" y="430" class="body">D9 → IN1   •   D8 → IN2</text>
+  <text x="589" y="456" class="body">D7 → IN3   •   D6 → IN4</text>
+
+  <line x1="579" y1="480" x2="1011" y2="480" stroke="#d4dce6" stroke-width="2"/>
+  <text x="589" y="511" class="label">Sensors / controls</text>
+  <text x="589" y="539" class="body">AMG8833: SDA → A4; SCL → A5</text>
+  <text x="589" y="565" class="body">Ultrasonic: TRIG → D4; ECHO → D11</text>
+  <text x="589" y="591" class="body">Left whisker NO → D2; COM → GND</text>
+  <text x="589" y="617" class="body">Right whisker NO → D3; COM → GND</text>
+  <text x="589" y="643" class="body">Buzzer control → A3</text>
+  <text x="589" y="673" class="small">Sensor VCC → UNO 5V only if sensor breakout supports 5V.</text>
+  <text x="589" y="697" class="small">Whiskers use INPUT_PULLUP; NC terminals stay unconnected.</text>
+  <text x="589" y="721" class="small">If bare buzzer current is over 15 mA, drive through a transistor.</text>
+
+  <line x1="579" y1="744" x2="1011" y2="744" stroke="#d4dce6" stroke-width="2"/>
+  <text x="589" y="775" class="label">Optional battery monitor (A0)</text>
+  <text x="589" y="803" class="body">7.4 V pack + → 100 kΩ → A0 node</text>
+  <text x="589" y="829" class="body">A0 node → 27 kΩ → common GND</text>
+  <text x="589" y="857" class="small redtxt">Current firmware thresholds assume 3S, not a 7.4 V (2S) pack.</text>
+  <text x="589" y="881" class="small">Update battery thresholds for the actual pack, or leave A0 monitor out.</text>
+  <text x="589" y="921" class="small">Never connect battery + directly to A0.</text>
+
+  <!-- L298N + motors -->
+  <rect x="1070" y="196" width="490" height="355" class="section"/>
+  <text x="1094" y="230" class="head">5. L298N + FOUR DC MOTORS</text>
+  <rect x="1094" y="251" width="442" height="68" rx="10" fill="#fee2e2" stroke="#e78484" stroke-width="2"/>
+  <text x="1112" y="280" class="label">Motor supply “12V” means Vs input</text>
+  <text x="1112" y="304" class="small">Your 7.4 V pack goes here only if motors are rated for it.</text>
+  <text x="1094" y="352" class="body">L298N GND → battery − / common GND</text>
+  <text x="1094" y="381" class="body">OUT1 + OUT2 → left motor pair</text>
+  <text x="1094" y="410" class="body">OUT3 + OUT4 → right motor pair</text>
+  <text x="1094" y="439" class="small">Check each motor pair polarity; swap that pair if direction is reversed.</text>
+  <text x="1094" y="476" class="small redtxt">Do not connect LM2596 OUT+ to L298N +5V while its 5V regulator</text>
+  <text x="1094" y="498" class="small redtxt">jumper is enabled. Follow the labels/manual for your exact L298N board.</text>
+  <text x="1094" y="529" class="small">Do not power motors from Arduino 5V.</text>
+
+  <!-- ESP32 -->
+  <rect x="1070" y="574" width="490" height="379" class="section"/>
+  <text x="1094" y="608" class="head">6. ESP32-CAM — POWER + UART</text>
+  <text x="1094" y="647" class="body">5V pin ← LM2596 OUT+ (set to 5.0 V)</text>
+  <text x="1094" y="676" class="body">GND → common GND</text>
+  <line x1="1094" y1="695" x2="1536" y2="695" stroke="#d4dce6" stroke-width="2"/>
+  <text x="1094" y="727" class="label">Crossed serial wires</text>
+  <text x="1094" y="756" class="body">ESP GPIO13 TX → UNO D0 / RX</text>
+  <text x="1094" y="784" class="body">UNO D1 / TX → level shifter/divider → ESP GPIO14 RX</text>
+  <text x="1094" y="812" class="body">ESP GND ↔ UNO/common GND</text>
+  <text x="1094" y="847" class="small redtxt">Huwag direktang ikabit ang 5 V UNO TX sa ESP RX (3.3 V logic).</text>
+  <text x="1094" y="875" class="small">GPIO13/14 share pins with microSD; huwag gumamit ng microSD sa setup na ito.</text>
+  <text x="1094" y="903" class="small">Tanggalin muna ang D0/D1 UART wires kapag nag-a-upload sa UNO.</text>
+  <text x="1094" y="932" class="small">These UART pins must match the firmware: TX=13, RX=14.</text>
+
+  <!-- common ground bus and legend -->
+  <rect x="40" y="978" width="1520" height="192" rx="14" fill="#eef2f7" stroke="#9aa8b8" stroke-width="2"/>
+  <text x="64" y="1015" class="head">GROUND AT POWER CHECKLIST</text>
+  <text x="64" y="1046" class="body">Iisang common GND: battery −, L298N GND, LM2596 IN−/OUT−, UNO GND, ESP32-CAM GND, at lahat ng sensor GND.</text>
+  <text x="64" y="1075" class="body">Huwag pagdugtungin ang positive rails ng 7.4 V pack, 9 V UNO supply, at 5 V LM2596 output.</text>
+  <text x="64" y="1104" class="body">Bago ikabit ang boards: patayin ang power, i-check ang polarity, sukatin ang buck OUT, at tiyaking tama ang motor voltage.</text>
+  <text x="64" y="1142" class="small muted">Color guide: red = positive supply • black = GND • colored signal wires are named by pin above. Diagram is a connection map; module terminal positions vary.</text>
+</svg>
