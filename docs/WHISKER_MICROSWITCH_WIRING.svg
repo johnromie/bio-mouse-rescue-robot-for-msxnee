@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">BIO-MOUSE whisker microswitch wiring</title>
+  <desc id="desc">Two normally-open microswitches wired to Arduino UNO D2 and D3, with COM connected to GND and NC unused.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 32px; font-weight: 700; }
+      .sub { font-size: 18px; fill: #475569; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .label { font-size: 18px; font-weight: 600; }
+      .small { font-size: 15px; fill: #475569; }
+      .pin { font-size: 17px; font-weight: 700; }
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .board { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; }
+      .switch { fill: #fff; stroke: #334155; stroke-width: 3; }
+      .blue { fill: none; stroke: #0284c7; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+      .black { fill: none; stroke: #1f2937; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+      .unused { fill: none; stroke: #94a3b8; stroke-width: 4; stroke-dasharray: 9 8; stroke-linecap: round; }
+      .terminal { fill: #fff; stroke: #334155; stroke-width: 3; }
+    </style>
+  </defs>
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text x="50" y="58" class="title">Whisker microswitch wiring</text>
+  <text x="50" y="92" class="sub">Arduino UNO/Nano • INPUT_PULLUP • use COM and NO; leave NC disconnected</text>
+
+  <!-- LEFT CHANNEL -->
+  <rect x="40" y="125" width="545" height="475" rx="18" class="panel"/>
+  <text x="68" y="166" class="heading">Left whisker</text>
+  <rect x="70" y="215" width="205" height="275" rx="14" class="board"/>
+  <text x="95" y="255" class="label">Arduino UNO</text>
+  <text x="95" y="282" class="small">Whisker inputs</text>
+  <circle cx="275" cy="330" r="8" fill="#0284c7"/>
+  <text x="95" y="336" class="pin">D2</text>
+  <circle cx="275" cy="455" r="8" fill="#1f2937"/>
+  <text x="95" y="461" class="pin">GND</text>
+
+  <rect x="405" y="245" width="135" height="200" rx="14" class="switch"/>
+  <text x="421" y="277" class="label">Micro</text>
+  <text x="421" y="299" class="label">switch</text>
+  <path d="M455 322 L495 308" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="455" cy="322" r="8" fill="#64748b"/>
+  <circle cx="405" cy="330" r="9" class="terminal"/>
+  <circle cx="405" cy="455" r="9" class="terminal"/>
+  <circle cx="405" cy="520" r="9" class="terminal"/>
+  <text x="427" y="337" class="pin">NO</text>
+  <text x="427" y="462" class="pin">COM</text>
+  <text x="427" y="527" class="pin">NC</text>
+  <path d="M275 330 H405" class="blue"/>
+  <path d="M275 455 H405" class="black"/>
+  <path d="M405 520 H470" class="unused"/>
+  <text x="68" y="555" class="small">Blue: D2 → NO</text>
+  <text x="250" y="555" class="small">Black: GND → COM</text>
+  <text x="68" y="580" class="small">NC is not connected.</text>
+
+  <!-- RIGHT CHANNEL -->
+  <rect x="615" y="125" width="545" height="475" rx="18" class="panel"/>
+  <text x="643" y="166" class="heading">Right whisker</text>
+  <rect x="645" y="215" width="205" height="275" rx="14" class="board"/>
+  <text x="670" y="255" class="label">Arduino UNO</text>
+  <text x="670" y="282" class="small">Whisker inputs</text>
+  <circle cx="850" cy="330" r="8" fill="#0284c7"/>
+  <text x="670" y="336" class="pin">D3</text>
+  <circle cx="850" cy="455" r="8" fill="#1f2937"/>
+  <text x="670" y="461" class="pin">GND</text>
+
+  <rect x="980" y="245" width="135" height="200" rx="14" class="switch"/>
+  <text x="996" y="277" class="label">Micro</text>
+  <text x="996" y="299" class="label">switch</text>
+  <path d="M1030 322 L1070 308" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="1030" cy="322" r="8" fill="#64748b"/>
+  <circle cx="980" cy="330" r="9" class="terminal"/>
+  <circle cx="980" cy="455" r="9" class="terminal"/>
+  <circle cx="980" cy="520" r="9" class="terminal"/>
+  <text x="1002" y="337" class="pin">NO</text>
+  <text x="1002" y="462" class="pin">COM</text>
+  <text x="1002" y="527" class="pin">NC</text>
+  <path d="M850 330 H980" class="blue"/>
+  <path d="M850 455 H980" class="black"/>
+  <path d="M980 520 H1045" class="unused"/>
+  <text x="643" y="555" class="small">Blue: D3 → NO</text>
+  <text x="825" y="555" class="small">Black: GND → COM</text>
+  <text x="643" y="580" class="small">NC is not connected.</text>
+
+  <rect x="40" y="625" width="1120" height="95" rx="14" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+  <text x="65" y="662" class="label">When the lever is pressed, COM connects to NO and the input reads LOW.</text>
+  <text x="65" y="693" class="small">Do not connect the switch to 5V. Confirm COM/NO/NC by the markings or with a continuity meter;</text>
+  <text x="65" y="713" class="small">terminal positions vary by switch model. Both switches share Arduino GND.</text>
+</svg>

@@ -21,6 +21,8 @@ The whiskers use `INPUT_PULLUP`; an activated switch pulls its pin to GND.
 There is no physical E-STOP button in this prototype, so its input is disabled
 in firmware. The rear whisker is also not fitted and is disabled.
 
+Wiring picture: [Whisker microswitch wiring diagram](WHISKER_MICROSWITCH_WIRING.svg).
+
 ### Other connections
 
 | Device | Signal | Arduino pin |
