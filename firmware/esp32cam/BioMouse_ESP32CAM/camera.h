@@ -1,5 +1,5 @@
 /* ============================================================================
- *  CAMERA  (ESP32-CAM OV2640)
+ *  CAMERA  (ESP32-CAM OV3660 / OV2640)
  * ----------------------------------------------------------------------------
  *  Initialises the camera and provides a still-frame helper. The live MJPEG
  *  stream handler lives in the main .ino together with the HTTP routes.
@@ -18,7 +18,8 @@
 
 /* AI-Thinker ESP32-CAM pin map. If your board differs, edit ONLY these. */
 #define PWDN_GPIO_NUM     32
-#define RESET_GPIO_NUM    15
+// AI-Thinker ESP32-CAM has no separate camera reset pin wired to the OV2640.
+#define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM      0
 #define SIOD_GPIO_NUM     26
 #define SIOC_GPIO_NUM     27
@@ -35,7 +36,9 @@
 #define PCLK_GPIO_NUM     22
 
 inline bool cameraBegin() {
-  camera_config_t config;
+  // Zero-initialize optional fields (frame-buffer location/count, grab mode,
+  // and driver options) before assigning the board-specific camera pins.
+  camera_config_t config = {};
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer   = LEDC_TIMER_0;
   config.pin_d0       = Y2_GPIO_NUM;
@@ -56,6 +59,11 @@ inline bool cameraBegin() {
   config.pin_reset    = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;      // 20 MHz is the OV2640's normal clock
   config.pixel_format = PIXFORMAT_JPEG;   // JPEG lets the stream run smoothly
+  config.frame_size   = CAMERA_FRAME_SIZE;
+  config.jpeg_quality = CAMERA_QUALITY;
+  config.fb_count     = 1;             // One frame buffer keeps RAM use low.
+  config.fb_location  = CAMERA_FB_IN_PSRAM;
+  config.grab_mode    = CAMERA_GRAB_WHEN_EMPTY;
 
   // NOTE: ESP32 core 3.x removed the old sram32_gb_iram0_dflt / esp_camera_de_mem
   // trick that used to hand RAM from Wi-Fi to the camera. Those symbols no longer
@@ -79,7 +87,7 @@ inline bool cameraBegin() {
     s->set_quality(s, CAMERA_QUALITY);
   }
 
-  Serial.println(F("[CAMERA] OV2640 ready"));
+  Serial.println(F("[CAMERA] sensor ready"));
   return true;
 }
 

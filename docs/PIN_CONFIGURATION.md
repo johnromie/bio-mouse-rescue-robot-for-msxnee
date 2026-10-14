@@ -24,6 +24,7 @@ in firmware. The rear whisker is also not fitted and is disabled.
 Wiring picture: [Whisker microswitch wiring diagram](WHISKER_MICROSWITCH_WIRING.svg).
 
 Full prototype connection map: [Full system wiring diagram](FULL_SYSTEM_WIRING.svg).
+AMG8833 placement inside the case: [Sensor mounting illustration](AMG8833_SENSOR_MOUNT.svg).
 
 Component reference image from the prototype: [Original wiring image](docsprototype-wiring-original.png).
 For the reviewed power and signal connections, use the [Prototype wiring guide](PROTOTYPE_WIRING_REVIEW.svg); the colored crossings in the original image are hard to trace and are not the authoritative pin map.
@@ -56,9 +57,12 @@ Buzzer signal -> A3     Left whisker -> D2 -> switch -> GND
 ```
 
 The whisker inputs use `INPUT_PULLUP`: connect each switch between its pin and
-GND. The buzzer output should drive a transistor if the buzzer draws more than
-about 15 mA. The battery sense input requires the configured resistor divider;
-never connect the battery directly to A0.
+GND. Use a 5 V active buzzer. Recommended NPN low-side wiring: buzzer + to 5 V,
+buzzer - to the transistor collector, emitter to GND, and Arduino A3 through
+a 1 kOhm resistor to the base. Firmware drives A3 HIGH to turn it on. Direct
+A3-to-buzzer wiring is only for a buzzer drawing under about 15 mA. Passive
+buzzers need different firmware. The battery sense input requires its configured
+resistor divider; never connect the battery directly to A0.
 
 ### L298N wiring
 

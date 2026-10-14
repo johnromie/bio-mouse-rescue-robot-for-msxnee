@@ -67,9 +67,10 @@
   <text x="785" y="1025" class="body">HC-SR04: TRIG → D4; ECHO → D11</text>
   <text x="785" y="1062" class="body">Left microswitch: NO → D2; COM → GND</text>
   <text x="785" y="1099" class="body">Right microswitch: NO → D3; COM → GND</text>
-  <text x="785" y="1136" class="body">Active buzzer signal → A3; use a transistor driver if needed.</text>
-  <text x="785" y="1173" class="body">Sensor grounds → common GND; power from 5V only if the breakout allows it.</text>
-  <text x="785" y="1220" class="small muted">Whisker inputs use INPUT_PULLUP; leave NC unconnected. No physical E-STOP is fitted.</text>
+  <text x="785" y="1136" class="body">Active buzzer: +5V → buzzer+; buzzer− → NPN collector.</text>
+  <text x="785" y="1173" class="body">NPN emitter → GND; A3 → 1 kΩ → base. A3 HIGH turns it on.</text>
+  <text x="785" y="1210" class="body">Sensor grounds → common GND; use 5V only if breakout allows it.</text>
+  <text x="785" y="1250" class="small muted">Whiskers use INPUT_PULLUP; NC unconnected. No physical E-STOP is fitted.</text>
 
   <rect x="1470" y="900" width="690" height="390" class="section"/>
   <text x="1494" y="940" class="head">4. ESP32-CAM SERIAL LINK</text>

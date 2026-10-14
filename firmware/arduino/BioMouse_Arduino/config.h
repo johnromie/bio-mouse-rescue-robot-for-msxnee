@@ -68,8 +68,10 @@ const int8_t  PIN_WHISKER_REAR   = -1;  // no rear whisker in this wiring
 const bool    WHISKER_ACTIVE_LOW = true;
 
 // ---- [5] ACTIVE BUZZER ----------------------------------------------------
-// 5V ACTIVE buzzer: +5V -> buzzer -> GPIO pin (the pin sinks current).
-// Never wire a buzzer straight to a GPIO pin without a driver transistor.
+// 5V ACTIVE buzzer: recommended NPN low-side driver: +5V -> buzzer+;
+// buzzer- -> collector; emitter -> GND; A3 -> 1 kOhm -> base. A3 is HIGH
+// while the buzzer is on. Direct A3-to-buzzer wiring is only for a buzzer
+// drawing under ~15 mA. Passive buzzers need tone() and are not supported here.
 const uint8_t PIN_BUZZER           = A3;
 const uint16_t BUZZER_TEST_TONE_HZ = 2000;  // reserved for a tone() self-test
 

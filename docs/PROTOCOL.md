@@ -126,8 +126,10 @@ or, for an unknown command:
 ## 2. Layer 2: ESP32-CAM to Arduino (UART)
 
 - **115200 baud, 8N1**, one command per line, `\n` terminated.
-- UART2. Default pins: ESP32-CAM `GPIO13` (TX) to Arduino `D1` (RX), and
-  `GPIO14` (RX) from Arduino `D0` (TX). See `config.h` in both projects.
+- UART2. Default pins: ESP32-CAM `GPIO13` (TX) to Arduino UNO `D0` (RX), and
+  ESP32-CAM `GPIO14` (RX) from Arduino UNO `D1` (TX), through a 5 V to 3.3 V
+  level shifter/divider. Share GND. Disconnect these wires while uploading to
+  the UNO. See `config.h` in both projects.
 - `CR` characters are ignored, so `\r\n` also works.
 
 ### Commands (ESP32-CAM to Arduino)

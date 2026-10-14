@@ -1,5 +1,56 @@
 # BIO-MOUSE Testing Procedure
 
+## Using VS Code and PlatformIO
+
+This project has two PlatformIO environments: `uno` and `esp32cam`. Upload and
+test one board at a time first. PlatformIO usually detects the upload COM port
+automatically. To check it, open **PlatformIO Home → Devices** after plugging
+in the board. If no port appears, check Windows **Device Manager → Ports (COM &
+LPT)**, try a USB data cable/another USB port, or install the USB-to-serial
+driver required by that board or adapter.
+
+1. Open this project folder in VS Code and click the PlatformIO alien icon.
+2. Under **PROJECT TASKS**, expand `uno` or `esp32cam`, then **General**.
+3. Click **Build** to compile, or **Upload** to compile and flash the connected
+   board. If asked, select the COM port that appeared when that board was
+   plugged in.
+4. To see serial output, expand **Monitor** under the matching environment.
+   Set it to **115200 baud**. Stop the monitor with **Ctrl+C** before uploading
+   again because it keeps the port open.
+
+Optional PlatformIO Core CLI commands from the project root (replace `COM5` or
+`COM6` with the port detected for the connected board):
+
+```powershell
+pio run -e uno
+pio run -e uno -t upload --upload-port COM5
+pio run -e esp32cam
+pio run -e esp32cam -t upload --upload-port COM6
+pio device monitor -p COM5 -b 115200
+```
+
+These terminal commands do the same build/upload/monitor actions as the
+PlatformIO task buttons; they are alternatives, not extra setup steps.
+
+### Before applying power
+
+- Compare every connection with `docs/PIN_CONFIGURATION.md` and the reviewed
+  prototype wiring guide. Follow actual board pin labels, not wire colors.
+- Keep the wheels off the ground for all first motor tests.
+- Check battery polarity and regulator output with a multimeter before
+  connecting the ESP32-CAM. Keep battery/motor voltage, UNO supply and regulated
+  5 V positive rails separate as shown in the wiring guide. Never feed 9 V into
+  a 5 V pin or connect the battery directly to A0.
+- Join grounds where the wiring guide calls for common GND. Never connect UNO
+  D1/TX (5 V) directly to ESP32-CAM GPIO14/RX (3.3 V); use the specified level
+  shifter or divider.
+- Do not use the UNO USB serial connection and ESP32 UART on D0/D1 at once.
+  Disconnect both UART signal wires while uploading the UNO, then reconnect
+  them with power off. Keep common ground for normal system operation.
+
+If Windows shows a device with a warning symbol but no COM port, the board may
+need its USB-to-serial driver (often CH340 or CP210x, depending on the board).
+
 Test from the inside out. Each stage assumes the previous one passed, so a
 failure points at one thing rather than five.
 
@@ -174,8 +225,57 @@ CMD:FORWARD    -> ACK:FORWARD                (allowed again)
 
 ## Stage B — Arduino standalone (USB serial)
 
-Upload `BioMouse_Arduino.ino`, open the serial monitor at **115200 baud**, and
-confirm the banner shows `Thermal sensor: READY`.
+This tests the UNO with no ESP32 UART wires attached.
+
+1. Power off and unplug the ESP32-CAM UART signal wires from UNO D0 and D1.
+   Connect the UNO to the PC by USB.
+2. In PlatformIO click **PROJECT TASKS → uno → General → Upload**. Select the
+   UNO COM port if prompted.
+3. Open **PROJECT TASKS → uno → General → Monitor** at 115200 baud. Set the
+   monitor line ending to **Newline**.
+4. Confirm the startup banner and `SENSOR:READY` if the AMG8833 is connected.
+
+Send each command in the monitor input box and press Enter. Commands are
+newline-terminated. Keep the wheels lifted, use low speed, and send `CMD:STOP`
+immediately after each brief movement.
+
+```text
+CMD:MODE:MANUAL
+CMD:SPEED:30
+CMD:FORWARD
+CMD:STOP
+CMD:LEFT
+CMD:STOP
+CMD:RIGHT
+CMD:STOP
+CMD:BACKWARD
+CMD:STOP
+CMD:SCAN
+CMD:STOP
+```
+
+Other standalone checks:
+
+```text
+CMD:SELFTEST
+CMD:BUZZER:TEST
+CMD:BUZZER:ON
+CMD:BUZZER:OFF
+CMD:MODE:AUTO
+CMD:STOP
+CMD:MODE:MANUAL
+```
+
+Expect `ACK:` responses and matching movement/status lines. `CMD:SELFTEST`
+reports sensor and battery state. Battery readings are only meaningful when
+the A0 divider and firmware thresholds match the actual battery. The reviewed
+prototype wiring guide says to leave its divider disconnected for the shown
+2S pack until the 3S firmware thresholds are corrected. Test AUTO only with
+the wheels lifted and the thermal sensor working.
+
+The UNO stops when it receives no valid command for about 3 seconds. During
+USB-only tests, send `CMD:PING` periodically if you need to keep the watchdog
+fed. In normal operation the ESP32-CAM sends those pings automatically.
 
 ### B1. Sensor detection
 | Test | Expect |
@@ -209,8 +309,11 @@ Confirm commands still respond *during* buzzing — this proves the buzzer is
 non-blocking.
 
 ### B4. Battery
-Send `CMD:SELFTEST` and compare `BATTERY:` against a multimeter. Adjust
-`BATTERY_FULL_VOLTS`, `BATTERY_EMPTY_VOLTS` or `BATTERY_DIVIDER_RATIO` if off.
+For the reviewed prototype's 7.4 V (2S) pack, **skip battery percentage
+validation and leave the A0 divider disconnected** until firmware thresholds
+are changed from the current 3S assumptions. Never connect the battery
+directly to A0. Once the divider and thresholds match the pack, send
+`CMD:SELFTEST` and compare its `BATTERY:` value with a multimeter.
 
 ### B5. Whiskers
 Touch each whisker. Expect `OBSTACLE:LEFT`, `OBSTACLE_LEFT:1`, and in MANUAL
@@ -218,8 +321,8 @@ mode `ROBOT:STOPPED:OBSTACLE`. Hold it against a wall for 5 s and confirm the
 robot does **not** reverse repeatedly (that is the cooldown working).
 
 ### B6. E-STOP button
-Press it. Expect `EVENT:ESTOP_BUTTON`, `ROBOT:STOPPED:ESTOP_BUTTON`, and the
-robot staying stopped until released.
+The current prototype has no physical E-STOP fitted and firmware sets
+`PIN_ESTOP_BUTTON = -1`; skip this test unless you install and configure one.
 
 ### B7. Failsafe — the real test
 Stop sending anything for 4 s. Expect `EVENT:FAILSAFE_LINK_LOST` and
@@ -293,8 +396,22 @@ This proves the manoeuvre never blocks the UART.
 
 ## Stage C — Arduino + ESP32-CAM (UART)
 
-Wire per `docs/PIN_CONFIGURATION.md`. **ESP32 is 3.3 V logic; never connect a 5 V
-Arduino TX straight into the ESP32 RX pin.**
+This stage checks the real UART link. Upload both boards separately first.
+
+1. Power off and disconnect the UNO USB cable and ESP32-CAM programmer cable.
+2. Connect crosswise per `docs/PIN_CONFIGURATION.md`: ESP32-CAM GPIO13 TX →
+   UNO D0/RX; UNO D1/TX → level shifter/divider → ESP32-CAM GPIO14 RX. Connect
+   ESP32-CAM GND to common GND. Leave microSD unused because GPIO13/14 are used
+   by this UART setup.
+3. Power both boards from the reviewed supplies. Do not drive the motors yet.
+4. To view ESP32 logs, reconnect its USB/programmer serial and open the
+   `esp32cam` Monitor at 115200. This USB serial is UART0 debug; the Arduino
+   link uses ESP32 UART2 on GPIO13/14.
+
+For a motor/command relay check, leave the wheels lifted and send commands from
+the browser panel in Stage D. The ESP32 monitor should show forwarded commands
+and Arduino replies. Do not use the UNO USB monitor while D0/D1 are connected
+to the ESP32.
 
 ### C1. UART link
 Expect `ROBOT:ONLINE:CMDS=0:RX=0:UPTIME=0s` every second. If silent:
@@ -318,9 +435,23 @@ and the robot must stop.
 
 ## Stage D — Phone browser and app (Wi-Fi)
 
-### D1. Access point
-Join `BIO-MOUSE-XXXX` (password `biomouse123`) and open **`http://192.168.4.1`**.
-The built-in control panel appears with live status and working buttons.
+### D1. Access point and manual browser test
+
+1. Leave both boards connected and powered as in Stage C. Keep the wheels
+   lifted for movement checks.
+2. In ESP32-CAM Monitor, wait for the Wi-Fi SSID. It is `BIO-MOUSE-XXXX` with
+   a board-specific suffix; password is `biomouse123`.
+3. Connect the phone to that Wi-Fi. If it says there is no internet, stay
+   connected to the robot network.
+4. Open **http://192.168.4.1** in the phone browser. Confirm the control panel
+   loads and robot status says online before testing movement.
+5. Tap **STOP** first. Select **MANUAL**, set low speed, briefly test each
+   direction and tap **STOP** after each. Test **SCAN**, buzzer and video; end
+   with STOP.
+
+For an ESP32-CAM-only test, upload and boot it without the Arduino UART link.
+Connect the phone to its Wi-Fi and open the same address to check the panel and
+camera stream. Robot status and drive commands will not work without the UNO.
 
 ### D2. Each button
 Tap every button: FWD, BACK, LEFT, RIGHT, STOP, SCAN, AUTO, MANUAL, buzzer test,
@@ -366,7 +497,7 @@ complete commented example.
 - [ ] All four wheels drive the correct way
 - [ ] `CMD:SPEED` visibly changes speed
 - [ ] STOP is instant from every mode
-- [ ] E-STOP latches until released
+- [ ] If a physical E-STOP is installed and configured, it latches until released
 - [ ] Failsafe stops the robot within 3 s of losing the link
 - [ ] Whiskers block driving in both MANUAL and AUTO
 - [ ] Thermal guidance steers correctly for LEFT / CENTER / RIGHT

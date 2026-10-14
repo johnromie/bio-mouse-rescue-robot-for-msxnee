@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">AMG8833 placement inside the BIO-MOUSE prototype enclosure</title>
+  <desc id="desc">Cutaway side view showing the AMG8833 board mounted just behind a clear opening in the front wall, facing outward with an unobstructed 60 degree thermal field of view.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 34px; font-weight: 700; }
+      .sub { font-size: 18px; fill: #526174; }
+      .head { font-size: 22px; font-weight: 700; }
+      .label { font-size: 18px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; }
+      .case { fill: #e2e8f0; stroke: #334155; stroke-width: 5; }
+      .board { fill: #16836f; stroke: #0f4f47; stroke-width: 4; }
+      .window { fill: #46515b; stroke: #111827; stroke-width: 3; }
+      .warn { fill: #fff5d6; stroke: #e2a900; stroke-width: 2; }
+      .fov { fill: #fbbf24; fill-opacity: .18; stroke: #e89b00; stroke-width: 4; stroke-dasharray: 12 9; }
+      .leader { fill: none; stroke: #334155; stroke-width: 3; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
+  </defs>
+  <rect width="1600" height="1050" fill="#f8fafc"/>
+  <text x="48" y="55" class="title">PAGKAKABIT NG AMG8833 SA LOOB NG PROTO</text>
+  <text x="50" y="88" class="sub">Side cutaway: board sa loob ng kaha, sensor window nakaharap sa labas sa pamamagitan ng opening.</text>
+
+  <!-- Exterior target and the sensor's field of view -->
+  <rect x="55" y="330" width="175" height="235" rx="20" fill="#fee2e2" stroke="#dc2626" stroke-width="4"/>
+  <circle cx="142" cy="390" r="34" fill="#f97316" opacity=".9"/>
+  <path d="M120 460 Q142 430 164 460 L178 525 L106 525 Z" fill="#ef4444"/>
+  <text x="72" y="600" class="label">Bagay / tao</text>
+  <text x="76" y="627" class="small">na susukatin</text>
+
+  <polygon points="678,404 238,246 238,556" class="fov"/>
+  <text x="302" y="220" class="label" fill="#9a6500">Malayang tanaw ng sensor (~60°)</text>
+
+  <!-- Robot enclosure cutaway -->
+  <path d="M650 210 H1480 V750 H650 Z" class="case"/>
+  <text x="1050" y="250" class="head">LOOB NG PROTO</text>
+  <text x="430" y="715" class="head">LABAS / HARAP</text>
+
+  <!-- Opening in front wall; opening separates upper and lower wall sections -->
+  <rect x="630" y="210" width="42" height="150" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+  <rect x="630" y="442" width="42" height="308" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+  <rect x="630" y="360" width="42" height="82" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+  <path d="M595 359 H620 M595 443 H620" stroke="#2563eb" stroke-width="3"/>
+  <text x="370" y="310" class="label">Butas sa front panel</text>
+  <path d="M540 315 L625 370" class="leader" marker-end="url(#arrow)"/>
+  <text x="310" y="340" class="small">huwag takpan ng salamin</text>
+  <text x="344" y="363" class="small">o ordinaryong plastic</text>
+
+  <!-- AMG8833 breakout, mounted behind the opening -->
+  <rect x="690" y="310" width="300" height="225" rx="14" class="board"/>
+  <circle cx="720" cy="335" r="10" fill="#d8f3ea"/>
+  <circle cx="960" cy="510" r="10" fill="#d8f3ea"/>
+  <text x="795" y="500" class="label" fill="#fff">AMG8833 board</text>
+  <rect x="678" y="380" width="55" height="48" rx="10" class="window"/>
+  <ellipse cx="683" cy="404" rx="9" ry="20" fill="#cbd5e1"/>
+  <path d="M681 381 V427" stroke="#f8fafc" stroke-width="3"/>
+  <text x="787" y="285" class="small">Nakadikit/secured sa loob ng front wall</text>
+  <path d="M808 292 L776 319" class="leader" marker-end="url(#arrow)"/>
+
+  <!-- Mechanical mounting standoffs -->
+  <line x1="736" y1="330" x2="736" y2="292" stroke="#64748b" stroke-width="9"/>
+  <line x1="936" y1="518" x2="936" y2="558" stroke="#64748b" stroke-width="9"/>
+  <text x="1005" y="345" class="small">Gumamit ng standoff o bracket</text>
+  <path d="M1000 350 L946 360" class="leader" marker-end="url(#arrow)"/>
+
+  <!-- Other warm hardware kept away from the sensor -->
+  <rect x="1060" y="535" width="210" height="115" rx="12" fill="#cbd5e1" stroke="#475569" stroke-width="4"/>
+  <circle cx="1102" cy="592" r="32" fill="#64748b" stroke="#334155" stroke-width="4"/>
+  <circle cx="1102" cy="592" r="12" fill="#cbd5e1"/>
+  <text x="1150" y="584" class="label">Motor</text>
+  <text x="1150" y="612" class="small">at ibang init</text>
+  <path d="M1025 465 C1070 474 1095 500 1104 548" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
+  <text x="1260" y="470" class="small" fill="#b91c1c">Ilayo hangga't maaari</text>
+  <text x="1260" y="493" class="small" fill="#b91c1c">sa init ng motor/regulator</text>
+
+  <!-- Floor line and cutaway label -->
+  <line x1="50" y1="760" x2="1510" y2="760" stroke="#64748b" stroke-width="4"/>
+  <text x="680" y="790" class="small muted">Guhit na cutaway — hindi eksaktong sukat. Huwag hayaang sumilip sa FOV ang panel o bumper.</text>
+
+  <!-- Installation notes -->
+  <rect x="50" y="825" width="1500" height="185" rx="18" class="warn"/>
+  <text x="78" y="865" class="head">Mga dapat sundin</text>
+  <text x="82" y="904" class="body">• Nasa loob ang PCB; ang sensor window lang ang nakatapat sa opening at nakaharap sa labas.</text>
+  <text x="82" y="940" class="body">• Panatilihing walang takip at walang harang sa viewing cone. Ordinaryong salamin/plastic ay maaaring humarang sa thermal IR.</text>
+  <text x="82" y="976" class="body">• Ikabit nang matibay, at tiyaking hindi nakikita ng sensor ang kaha, gulong, o ibang bahagi ng robot.</text>
+</svg>

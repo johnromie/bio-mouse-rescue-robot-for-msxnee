@@ -63,8 +63,8 @@
  *    another free pair such as GPIO4 / GPIO12.
  *
  *  WIRING (crossed over, and share a common ground!)
- *    ESP32-CAM GPIO13 (TX)  -->  Arduino D1  (RX)
- *    ESP32-CAM GPIO14 (RX)  <--  Arduino D0  (TX)
+ *    ESP32-CAM GPIO13 (TX)  -->  Arduino D0  (RX)
+ *    ESP32-CAM GPIO14 (RX)  <--  Arduino D1  (TX)
  *    ESP32-CAM GND          ---  Arduino GND
  *
  *  IMPORTANT: the ESP32 is 3.3V logic. Most Arduino UNO / Nano boards are 5V
