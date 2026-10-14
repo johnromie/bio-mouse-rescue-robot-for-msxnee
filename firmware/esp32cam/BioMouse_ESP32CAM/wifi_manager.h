@@ -62,13 +62,38 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
 /* ---- Station mode ------------------------------------------------------- */
 inline bool startStation() {
   WiFi.mode(WIFI_STA);
+  // Keep the radio awake during association. This can help with phone
+  // hotspots that otherwise take longer to respond than a home router.
+  WiFi.setSleep(false);
+  WiFi.setAutoReconnect(true);
+
+  Serial.print(F("[WIFI] checking for hotspot '"));
+  Serial.print(STATION_SSID);
+  Serial.println(F("' ..."));
+  int networkCount = WiFi.scanNetworks();
+  bool targetFound = false;
+  for (int i = 0; i < networkCount; ++i) {
+    if (WiFi.SSID(i) == STATION_SSID) {
+      targetFound = true;
+      Serial.print(F("[WIFI] hotspot visible, channel="));
+      Serial.print(WiFi.channel(i));
+      Serial.print(F(" RSSI="));
+      Serial.println(WiFi.RSSI(i));
+      break;
+    }
+  }
+  if (!targetFound) {
+    Serial.println(F("[WIFI] hotspot not found; check its name, 2.4 GHz, and that hotspot is on"));
+  }
+  WiFi.scanDelete();
+
   WiFi.begin(STATION_SSID, STATION_PASSWORD);
 
   Serial.print(F("[WIFI] joining '"));
   Serial.print(STATION_SSID);
   Serial.println(F("' ..."));
 
-  uint8_t attempts = 0;
+  uint16_t attempts = 0;
   while (WiFi.status() != WL_CONNECTED && attempts < STATION_MAX_RETRIES) {
     delay(500);
     attempts++;
@@ -79,11 +104,15 @@ inline bool startStation() {
   if (WiFi.status() == WL_CONNECTED) {
     Serial.print(F("[WIFI] connected, IP = "));
     Serial.println(WiFi.localIP());
+    Serial.print(F("[WIFI] gateway = "));
+    Serial.println(WiFi.gatewayIP());
     return true;
   }
 
   // Fall back to the AP so the robot stays reachable.
-  Serial.println(F("[WIFI] station failed, falling back to AP mode"));
+  Serial.print(F("[WIFI] station failed; status="));
+  Serial.print((int)WiFi.status());
+  Serial.println(F(" (1=no SSID, 4=auth/connect failed, 6=disconnected); falling back to AP mode"));
   WiFi.disconnect(true);
   startAccessPoint(STATION_FALLBACK_SSID);
   return false;
@@ -97,15 +126,21 @@ inline void wifiBegin() {
 
 /* True while the Wi-Fi interface has an IP the app can reach. */
 inline bool wifiIsUp() {
-  return (USE_STATION_MODE ? (WiFi.status() == WL_CONNECTED)
-                           : (WiFi.softAPgetStationNum() >= 0));
+  wifi_mode_t mode = WiFi.getMode();
+  if ((mode & WIFI_STA) && WiFi.status() == WL_CONNECTED) return true;
+  // Station mode may fall back to its setup AP. Check the active interface,
+  // rather than the compile-time preference, so the fallback is reported up.
+  if (mode & WIFI_AP) return WiFi.softAPIP() != IPAddress(0, 0, 0, 0);
+  return false;
 }
 
 /* The address the phone should use. */
 inline String wifiAddress() {
-  if (USE_STATION_MODE && WiFi.status() == WL_CONNECTED)
+  wifi_mode_t mode = WiFi.getMode();
+  if ((mode & WIFI_STA) && WiFi.status() == WL_CONNECTED)
     return WiFi.localIP().toString();
-  return String("192.168.4.1");
+  if (mode & WIFI_AP) return WiFi.softAPIP().toString();
+  return String("0.0.0.0");
 }
 
 #endif // BIOMOUSE_ESP_WIFI_H

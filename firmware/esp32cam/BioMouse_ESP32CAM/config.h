@@ -114,7 +114,8 @@ const uint8_t AP_CHANNEL   = 1;
 // ---- Station mode (used when USE_STATION_MODE == true) ------------------
 const char* STATION_SSID         = BIOMOUSE_STATION_SSID;
 const char* STATION_PASSWORD     = BIOMOUSE_STATION_PASSWORD;
-const uint8_t STATION_MAX_RETRIES = 20;
+// 60 x 500 ms gives phone hotspots up to 30 seconds to associate.
+const uint8_t STATION_MAX_RETRIES = 60;
 
 /* If the router cannot be reached after STATION_MAX_RETRIES, bring the AP up
  * anyway so the robot stays reachable instead of disappearing. */
