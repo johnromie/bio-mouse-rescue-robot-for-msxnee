@@ -38,8 +38,15 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
   const char *pass = fallbackName ? STATION_FALLBACK_PASSWORD : AP_PASSWORD;
 
   WiFi.mode(WIFI_AP);
-  WiFi.softAPConfig(IPAddress(192,168,4,1), IPAddress(192,168,4,1),
-                    IPAddress(255,255,255,0));
+  const IPAddress apIp(192, 168, 4, 1);
+  const IPAddress subnet(255, 255, 255, 0);
+  const IPAddress dhcpLeaseStart(192, 168, 4, 2);
+  // Set the DHCP lease start explicitly. Some Arduino-ESP32 core versions
+  // mishandle the default lease start, leaving clients with 169.254.x.x.
+  if (!WiFi.softAPConfig(apIp, apIp, subnet, dhcpLeaseStart)) {
+    Serial.println(F("[WIFI] AP IP/DHCP configuration FAILED"));
+    return;
+  }
   bool ok = (strlen(pass) >= 8)
               ? WiFi.softAP(ssid.c_str(), pass)
               : WiFi.softAP(ssid.c_str());
@@ -53,6 +60,8 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
   Serial.print  (F("  BIO-MOUSE access point is up\n"));
   Serial.print  (F("  SSID      : ")); Serial.println(ssid);
   Serial.print  (F("  Password  : ")); Serial.println(pass);
+  Serial.print  (F("  AP IP     : ")); Serial.println(WiFi.softAPIP());
+  Serial.print  (F("  DHCP from : ")); Serial.println(dhcpLeaseStart);
   Serial.print  (F("  Connect the phone to that SSID, then open:\n"));
   Serial.println(F("      http://192.168.4.1"));
   Serial.println(F("============================================"));
