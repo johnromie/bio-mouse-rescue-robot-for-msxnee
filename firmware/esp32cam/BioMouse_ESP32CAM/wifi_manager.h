@@ -30,6 +30,15 @@ inline String uniqueApSuffix() {
   return String(buf);
 }
 
+inline void logApClientEvent(arduino_event_id_t event, arduino_event_info_t info) {
+  if (event == ARDUINO_EVENT_WIFI_AP_STACONNECTED) {
+    Serial.println(F("[WIFI] phone associated; waiting for DHCP lease"));
+  } else if (event == ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED) {
+    Serial.print(F("[WIFI] DHCP lease assigned: "));
+    Serial.println(IPAddress(info.wifi_ap_staipassigned.ip.addr));
+  }
+}
+
 /* ---- Access Point ------------------------------------------------------- */
 inline void startAccessPoint(const char *fallbackName = nullptr) {
   String ssid = String(AP_SSID_PREFIX) + "-" + uniqueApSuffix();
@@ -38,20 +47,22 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
   const char *pass = fallbackName ? STATION_FALLBACK_PASSWORD : AP_PASSWORD;
 
   WiFi.mode(WIFI_AP);
+  WiFi.setSleep(false);
+  const bool ok = (strlen(pass) >= 8)
+                    ? WiFi.softAP(ssid.c_str(), pass, 1, 0, 4)
+                    : WiFi.softAP(ssid.c_str(), nullptr, 1, 0, 4);
+  if (!ok) {
+    Serial.println(F("[WIFI] softAP FAILED"));
+    return;
+  }
+
   const IPAddress apIp(192, 168, 4, 1);
   const IPAddress subnet(255, 255, 255, 0);
   const IPAddress dhcpLeaseStart(192, 168, 4, 2);
-  // Set the DHCP lease start explicitly. Some Arduino-ESP32 core versions
-  // mishandle the default lease start, leaving clients with 169.254.x.x.
+  // Configure the AP interface after enabling the SSID so the DHCP server
+  // starts against the live AP. Start the lease pool at 192.168.4.2.
   if (!WiFi.softAPConfig(apIp, apIp, subnet, dhcpLeaseStart)) {
     Serial.println(F("[WIFI] AP IP/DHCP configuration FAILED"));
-    return;
-  }
-  bool ok = (strlen(pass) >= 8)
-              ? WiFi.softAP(ssid.c_str(), pass)
-              : WiFi.softAP(ssid.c_str());
-  if (!ok) {
-    Serial.println(F("[WIFI] softAP FAILED"));
     return;
   }
 
@@ -129,6 +140,8 @@ inline bool startStation() {
 
 /* ---- Single entry point ------------------------------------------------- */
 inline void wifiBegin() {
+  WiFi.onEvent(logApClientEvent, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
+  WiFi.onEvent(logApClientEvent, ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED);
   if (USE_STATION_MODE) startStation();
   else                   startAccessPoint();
 }
