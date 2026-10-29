@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include <WiFi.h>
+#include <esp_netif.h>
 
 // Last four hex digits of the chip MAC, so several robots can be told apart.
 inline String uniqueApSuffix() {
@@ -37,6 +38,43 @@ inline void logApClientEvent(arduino_event_id_t event, arduino_event_info_t info
     Serial.print(F("[WIFI] DHCP lease assigned: "));
     Serial.println(IPAddress(info.wifi_ap_staipassigned.ip.addr));
   }
+}
+
+// Ensure the AP DHCP server is actually running after the AP interface has
+// been created. softAPConfig normally starts it, but some core/interface
+// startup sequences can leave it stopped.
+inline bool ensureApDhcpServer() {
+  esp_netif_t *apNetif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
+  if (apNetif == nullptr) {
+    Serial.println(F("[WIFI] ERROR: AP network interface not found"));
+    return false;
+  }
+
+  esp_netif_dhcp_status_t dhcpStatus = ESP_NETIF_DHCP_INIT;
+  esp_err_t err = esp_netif_dhcps_get_status(apNetif, &dhcpStatus);
+  if (err != ESP_OK) {
+    Serial.printf("[WIFI] ERROR: cannot read DHCP status: %s\n", esp_err_to_name(err));
+    return false;
+  }
+
+  // Restart it after AP startup so the server is bound to the final AP
+  // configuration before the phone begins its DHCP request.
+  if (dhcpStatus == ESP_NETIF_DHCP_STARTED) {
+    err = esp_netif_dhcps_stop(apNetif);
+    if (err != ESP_OK) {
+      Serial.printf("[WIFI] ERROR: DHCP server stop failed: %s\n", esp_err_to_name(err));
+      return false;
+    }
+  }
+
+  err = esp_netif_dhcps_start(apNetif);
+  if (err != ESP_OK) {
+    Serial.printf("[WIFI] ERROR: DHCP server start failed: %s\n", esp_err_to_name(err));
+    return false;
+  }
+
+  Serial.println(F("[WIFI] DHCP server is running"));
+  return true;
 }
 
 /* ---- Access Point ------------------------------------------------------- */
@@ -62,6 +100,11 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
                     : WiFi.softAP(ssid.c_str(), nullptr, 1, 0, 4);
   if (!ok) {
     Serial.println(F("[WIFI] softAP FAILED"));
+    return;
+  }
+
+  if (!ensureApDhcpServer()) {
+    Serial.println(F("[WIFI] DHCP is unavailable; phone will not receive an automatic IP"));
     return;
   }
 
