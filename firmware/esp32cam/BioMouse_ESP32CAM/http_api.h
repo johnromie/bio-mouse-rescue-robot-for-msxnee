@@ -319,7 +319,9 @@ inline void handleStream() {
  *  test every command and every status value from a phone browser before
  *  writing any app code, which makes hardware bring-up much easier.
  * ========================================================================== */
-inline const char* INDEX_HTML = R"HTML(
+// Keep this header compatible with the Arduino toolchain's C++ standard.
+// `inline` variables require C++17, while PlatformIO's ESP32 default may be C++11.
+static const char INDEX_HTML[] = R"HTML(
 <!DOCTYPE html><html><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
