@@ -48,21 +48,20 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
 
   WiFi.mode(WIFI_AP);
   WiFi.setSleep(false);
+  const IPAddress apIp(192, 168, 4, 1);
+  const IPAddress subnet(255, 255, 255, 0);
+  // Configure the AP interface before starting its DHCP server. Let the
+  // Arduino core choose the default lease pool instead of overriding it.
+  if (!WiFi.softAPConfig(apIp, apIp, subnet)) {
+    Serial.println(F("[WIFI] AP IP configuration FAILED"));
+    return;
+  }
+
   const bool ok = (strlen(pass) >= 8)
                     ? WiFi.softAP(ssid.c_str(), pass, 1, 0, 4)
                     : WiFi.softAP(ssid.c_str(), nullptr, 1, 0, 4);
   if (!ok) {
     Serial.println(F("[WIFI] softAP FAILED"));
-    return;
-  }
-
-  const IPAddress apIp(192, 168, 4, 1);
-  const IPAddress subnet(255, 255, 255, 0);
-  const IPAddress dhcpLeaseStart(192, 168, 4, 2);
-  // Configure the AP interface after enabling the SSID so the DHCP server
-  // starts against the live AP. Start the lease pool at 192.168.4.2.
-  if (!WiFi.softAPConfig(apIp, apIp, subnet, dhcpLeaseStart)) {
-    Serial.println(F("[WIFI] AP IP/DHCP configuration FAILED"));
     return;
   }
 
@@ -72,7 +71,7 @@ inline void startAccessPoint(const char *fallbackName = nullptr) {
   Serial.print  (F("  SSID      : ")); Serial.println(ssid);
   Serial.print  (F("  Password  : ")); Serial.println(pass);
   Serial.print  (F("  AP IP     : ")); Serial.println(WiFi.softAPIP());
-  Serial.print  (F("  DHCP from : ")); Serial.println(dhcpLeaseStart);
+  Serial.println(F("  DHCP      : automatic"));
   Serial.print  (F("  Connect the phone to that SSID, then open:\n"));
   Serial.println(F("      http://192.168.4.1"));
   Serial.println(F("============================================"));
